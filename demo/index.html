@@ -1,8 +1,16 @@
 <script server>
-return {
-  title: "Demo",
-  lorem: await fetch("https://loripsum.net/api/10/headers").then(r => r.text()),
-}
+  let form = { name: undefined };
+  if (req.method == 'POST') {
+    form = req.body;
+  }
+
+  let paragraphs = req.query.paragraphs ?? 10;
+
+  return {
+    title: "Demo",
+    lorem: await fetch(`https://loripsum.net/api/${paragraphs}`).then(r => r.text()),
+    form,
+  }
 </script>
 
 <!DOCTYPE html>
@@ -15,8 +23,18 @@ return {
 </head>
 <body>
   <h1>Welcome to ${title}</h1>
-  <h2>Here is some lorem ipsum</h2>
+
+  <h2>Here is a form :</h2>
+  <form method="post">
+    ${form.name != null ? `<span>Hello ${form.name} !</span>` : ''}
+    <input type="text" name="name" placeholder="Your name">
+    <input type="submit" value="Submit">
+  </form>
+
   <hr>
+
+  <h2>Here is some (server-side rendered) lorem ipsum :</h2>
+  <span>You can add a <pre>?paragraphs=5</pre> parameter in the url to change the number of rendered paragraphs</span>
   ${lorem}
 </body>
 </html>

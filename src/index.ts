@@ -5,13 +5,19 @@ import { parse } from "./parser.js";
 let defaultConfig = {
 	port: 3000,
 	directory: "./",
+	expressConfig: (app: ReturnType<typeof express>) => {
+		app.use(express.urlencoded({ extended: true }));
+	},
 };
 
 export default async function run({
 	port = defaultConfig.port,
 	directory = defaultConfig.directory,
+	expressConfig = defaultConfig.expressConfig,
 } = defaultConfig) {
 	const app = express();
+
+	expressConfig(app);
 
 	// We list the files in the provided directory
 	let dir = await opendir(directory);
@@ -19,7 +25,6 @@ export default async function run({
 	let nextDir = await dir.read();
 	let pages = 0;
 	while (nextDir != null) {
-		console.log(nextDir.name);
 		let splittedDirName = nextDir.name.split(".");
 		if (splittedDirName[splittedDirName.length - 1] != "html") {
 			nextDir = await dir.read();
@@ -32,7 +37,7 @@ export default async function run({
 		let file = fileBuffer.toString();
 		let computeTemplate = parse(file);
 
-		app.get(`/${routeName}`, async (req, res) => {
+		app.all(`/${routeName}`, async (req, res) => {
 			let template = await computeTemplate(req);
 			res.setHeader("Content-Type", "text/html");
 			res.send(template);

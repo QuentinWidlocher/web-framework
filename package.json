@@ -4,7 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "demo": "cd ./demo && node server.js ; cd ..",
+    "start": "yarn build && yarn demo"
   },
   "dependencies": {
     "express": "^4.17.3",
