@@ -16,17 +16,17 @@ export default async function run({ port = defaultConfig.port, directory = defau
     let nextDir = await dir.read();
     let pages = 0;
     while (nextDir != null) {
-        console.log(nextDir.name);
         let splittedDirName = nextDir.name.split(".");
         if (splittedDirName[splittedDirName.length - 1] != "html") {
             nextDir = await dir.read();
             continue;
         }
         let routeName = splittedDirName[0].replace("index", "");
-        let fileBuffer = await readFile(`${directory}/${nextDir.name}`);
-        let file = fileBuffer.toString();
-        let computeTemplate = parse(file);
+        let fileName = nextDir.name;
         app.all(`/${routeName}`, async (req, res) => {
+            let fileBuffer = await readFile(`${directory}/${fileName}`);
+            let file = fileBuffer.toString();
+            let computeTemplate = parse(file);
             let template = await computeTemplate(req);
             res.setHeader("Content-Type", "text/html");
             res.send(template);

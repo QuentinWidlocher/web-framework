@@ -32,12 +32,13 @@ export default async function run({
 		}
 
 		let routeName = splittedDirName[0].replace("index", "");
-
-		let fileBuffer = await readFile(`${directory}/${nextDir.name}`);
-		let file = fileBuffer.toString();
-		let computeTemplate = parse(file);
+		let fileName = nextDir.name;
 
 		app.all(`/${routeName}`, async (req, res) => {
+			let fileBuffer = await readFile(`${directory}/${fileName}`);
+			let file = fileBuffer.toString();
+			let computeTemplate = parse(file);
+
 			let template = await computeTemplate(req);
 			res.setHeader("Content-Type", "text/html");
 			res.send(template);

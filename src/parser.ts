@@ -24,24 +24,36 @@ export function parse(template: string) {
 		let serverFunction = new AsyncFunction(Object.keys(scope), serverScript);
 
 		let bag = await serverFunction(...Object.values(scope));
-		let bagKeys = Object.keys(bag);
-		let bagValues = Object.values(bag);
 
-		let template = root.outerHTML.replace(
-			/\$\{(.*)\}/g,
-			function (match, token) {
-				let inlineExpression = new Function(
-					"req",
-					...bagKeys,
-					"return " + token
-				);
-
-				return inlineExpression(req, ...bagValues);
-			}
+		let template = root.outerHTML.replace(/{{(.*?)}}/gs, (match, token) =>
+			parseExpression(bag, req, [...token].join(""))
 		);
 
 		return template;
 	};
 
 	return computeTemplate;
+}
+
+function parseExpression(bag: Object, req: Request, code: string): string {
+	let bagKeys = Object.keys(bag);
+	let bagValues = Object.values(bag);
+
+	try {
+		let inlineExpression = new Function("req", ...bagKeys, "return " + code);
+
+		// We default to an empty string if the expression is not found
+		let result = inlineExpression(req, ...bagValues) ?? "";
+
+		// If we get an array, we join it without any commas or anything
+		if (Array.isArray(result)) {
+			result = result.join("");
+		}
+
+		return result;
+	} catch (e) {
+		console.error("Bad expression :", code);
+		console.error(e);
+		return "";
+	}
 }

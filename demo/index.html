@@ -19,22 +19,28 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title}</title>
+  <title>{{title}}</title>
 </head>
 <body>
-  <h1>Welcome to ${title}</h1>
+  <h1>Welcome to {{title}}</h1>
+  <ul>
+    {{[1, 2, 3, 4].map((i) => 
+        `<li>item ${i}</li>`
+    )}}
+  </ul>
+  <span>{{(() => { return "oui" })()}}</span>
 
   <h2>Here is a form :</h2>
   <form method="post">
-    ${form.name != null ? `<span>Hello ${form.name} !</span>` : ''}
+    {{form.name != null ? `<span>Hello ${form.name} !</span>` : ''}}
     <input type="text" name="name" placeholder="Your name">
     <input type="submit" value="Submit">
   </form>
 
   <hr>
 
-  <h2>Here is some (server-side rendered) lorem ipsum :</h2>
+  <h2>Here is some (server-side fetched) lorem ipsum :</h2>
   <span>You can add a <pre>?paragraphs=5</pre> parameter in the url to change the number of rendered paragraphs</span>
-  ${lorem}
+  {{lorem}}
 </body>
 </html>
