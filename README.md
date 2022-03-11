@@ -46,7 +46,7 @@ If you want to make some variables accessible in the template, you need to retur
 
 	// You can use everything ES2022 gives you
 	let paragraphs = req.query.paragraphs ?? 10;
-	let lorem: await fetch(`https://loripsum.net/api/${paragraphs}`).then(r => r.text()),
+	let lorem = await fetch(`https://loripsum.net/api/${paragraphs}`).then(r => r.text()),
 
 	// None of the variables will be available in the template by default
 	// Here, we say that only these variables are available but `req` will always be available
@@ -78,7 +78,7 @@ If you want to iterate over something and display the items, you'll need to use 
 
 I know it can be a little be hard to learn for newcomers but I think this is the only high step, and it's very beneficial to learn this approach early before exploring the world of web development.
 
-Virtually every javascript expression can be used inside the templating system. (if you REALLY want a imperative approach you COULD use an IIFE but I'd advise against it)
+Virtually every javascript expression can be used inside the templating system.
 
 ### Example of the templating system
 
@@ -92,13 +92,9 @@ Virtually every javascript expression can be used inside the templating system. 
 <!-- Iteration -->
 <ul>
 	{{list.map(i => `
-	<li>${i}</li>
+		<li>${i}</li>
 	`)}}
 </ul>
-
-<!-- Ugly and useless IIFE -->
-<!-- DON'T TRY THIS AT HOME -->
-<span>{{(() => { return "yes" })()}}</span>
 ```
 
 ## Routing
