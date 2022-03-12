@@ -132,6 +132,18 @@ States are local to the route.
 
 If you need to share data between routes, you can use the `global` variable (but only in server code, not in templating)
 
+You can import any module you need by using the `await import("module")` syntax.
+
+```html
+<script server>
+	let fs = await import("fs/promises");
+
+	return {
+		files: await fs.readdir('.'),
+	}
+</script>
+```
+
 ## Templating
 
 Of course, to build a web page, you need a templating system to display your data.  

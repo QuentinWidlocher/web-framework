@@ -1,4 +1,6 @@
 <script server>
+	let fs = await import("fs/promises");
+
 	let form = { name: undefined };
 	if (req.method == 'POST') {
 	  form = req.body;
@@ -11,6 +13,7 @@
 	  random: Math.random(),
 	  lorem: await fetch(`https://loripsum.net/api/${paragraphs}`).then(r => r.text()),
 	  form,
+	  files: await fs.readdir('.'),
 	}
 </script>
 
@@ -43,8 +46,8 @@
 
 			<h2 class="subtitle">List</h2>
 			<ul>
-				${[1, 2, 3, 4].map((i) => `
-				<li>item ${i}</li>
+				${files.map((i) => `
+				<li>${i}</li>
 				` ).join('')}
 			</ul>
 

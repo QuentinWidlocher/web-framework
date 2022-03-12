@@ -43,11 +43,11 @@ async function start({ port, directory, expressConfig }) {
     }
     return app.listen(port, () => {
         console.log(`Listening on port ${port} with ${pages} pages and ${assets} assets`);
+        console.log(`Visit http://localhost:${port}`);
     });
 }
 export default async function run({ port = defaultConfig.port, directory = defaultConfig.directory, expressConfig = defaultConfig.expressConfig, } = defaultConfig) {
     let server = await start({ port, directory, expressConfig });
-    console.log(`Visit http://localhost:${port}`);
     watch(directory, async (_, file) => {
         console.log(`${file} changed, restarting server`);
         console.log("--------------------------------------");
