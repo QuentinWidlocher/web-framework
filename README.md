@@ -109,7 +109,7 @@ Inside this script tag, you have access to the client request with the `req` var
 </script>
 ```
 
-If you want to make some variables available in your template, you'll need to return a dictionary of them, as an object.
+If you want to make some variables available in your template, you'll need to return a dictionary of them, as an object. I call this dictionary the _bag_.
 
 ```html
 <script server>
@@ -119,6 +119,19 @@ If you want to make some variables available in your template, you'll need to re
 	};
 </script>
 ```
+
+You can also store state for the duration of the server, in the `state` variable.  
+States are local to the route.
+
+```html
+<script server>
+	if (req.method == "POST") {
+		state.counter++;
+	}
+</script>
+```
+
+If you need to share data between routes, you can use the `global` variable (but only in server code, not in templating)
 
 ## Templating
 
@@ -153,6 +166,8 @@ I know it can be a little be hard to learn for newcomers but I think this is the
 
 Virtually every javascript expression can be used inside the templating system.
 
+You can access the route `state` variable in your template, but remember to use state only when you want data to **persist** between renders, it's a waste of memory to use the `state` variable only to pass data to the template, use the bag instead.
+
 ## Routing
 
 To serve different pages, create your html pages with your server code somewhere. (let's say at the root of your project)
@@ -172,10 +187,11 @@ An Express server will start, you can configure it with an object parameter. (yo
 - [x] Templating system
 - [x] Server side rendering
 - [x] Public file serving
-- [ ] Use ${} for templates instead of {{}}
 - [x] A well commented code for curious people
+- [x] Add watch mode to the server
+- [x] Add a in-memory state for the routes
+- [ ] Use ${} for templates instead of {{}}
 - [ ] An article to explain this to beginners
 - [ ] Import "components" with server code
-- [ ] Support layout routes to avoid writing the entire html each time
 
 Suggestions and pull requests are welcome of course !

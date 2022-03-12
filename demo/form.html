@@ -1,51 +1,129 @@
 <script server>
-if (req.method == "POST") {
-  let formData = req.body;
-  if (formData._action == "CREATE") {
-    state.users = [...(state.users ?? []), formData];
-  } else if (formData._action == "DELETE") {
-    state.users = state.users.filter((_, i) => i != req.body.index);
-  } 
-}
+	if (req.method == "POST") {
+		let formData = req.body;
+		if (
+			formData._action == "CREATE" &&
+			formData.firstName &&
+			formData.lastName
+		) {
+			state.users = [...(state.users ?? []), formData];
+		} else if (formData._action == "DELETE") {
+			state.users = state.users.filter((_, i) => i != req.body.index);
+		}
+	}
+
+	let filteredUsers = state.users ?? [];
+
+	if (req.method == "GET" && state.users && req.query?.search != null) {
+		filteredUsers = state.users.filter(
+			(u) =>
+				u.firstName.includes(req.query.search) ||
+				u.lastName.includes(req.query.search)
+		);
+	}
+
+	return {
+		filteredUsers,
+		searchQuery: req.query?.search ?? "",
+	};
 </script>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="tailwind.min.css">
-  <title>Form</title>
-</head>
-<body>
-  <main class="container mx-auto my-5">
-    <nav class="p-3 mb-5">
-      <a class="underline" href="/">Home</a>
-    </nav>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="bulma.min.css" />
+		<title>Form</title>
+	</head>
+	<body>
+		<nav class="navbar is-primary mb-5">
+			<div class="navbar-brand">
+				<a class="navbar-item" href="/">Home</a>
+				<a class="navbar-item is-active" href="/form">Example form</a>
+			</div>
+		</nav>
+		<main class="container">
+			<h1 class="title">
+				Example CR<span style="text-decoration: line-through">U</span>D
+			</h1>
 
-    <h1 class="text-xl mb-5">Example CRUD</h1>
-
-    <div class="w-full frid grid-cols-2 grid-gaps-5">
-      <section>
-        <form method="post">
-          <input type="hidden" name="_action" value="DELETE">
-          <ul class="my-5">
-            {{state.users?.map((user, i) => `
-              <li class="border-b last:border-b-none p-1 flex justify-between">${user.firstName} ${user.lastName} <button class="p-2 rounded border border-red-500 text-red-500" name="index" value="${i}" type="submit">Delete</button></li>
-            `)}}
-          </ul>
-        </form>
-      </section>
-      <section>
-        <form method="post">
-          <input type="hidden" name="_action" value="CREATE">
-          <input class="rounded border p-2" type="text" name="firstName">
-          <input class="rounded border p-2" type="text" name="lastName">
-          <button class="p-2 rounded bg-gray-200" type="submit">Ajouter</button>
-        </form>
-      </section>
-    </div>
-  </main>
-</body>
+			<div class="columns">
+				<section class="column">
+					{{state.users?.length > 0 ? `
+					<div class="box">
+						<form method="get">
+							<div class="field has-addons mb-5">
+								<div class="control is-expanded">
+									<input
+										class="input"
+										type="text"
+										name="search"
+										value="${searchQuery}"
+									/>
+								</div>
+								<div class="control">
+									<button class="button is-info" type="submit">Search</button>
+								</div>
+							</div>
+						</form>
+						<form method="post">
+							<input type="hidden" name="_action" value="DELETE" />
+							<ul>
+								${filteredUsers.map((user, i) => `
+								<li class="media">
+									<div class="media-content">
+										<span>${user.firstName} ${user.lastName}</span>
+									</div>
+									<div class="media-right">
+										<button
+											class="button is-danger is-light is-small"
+											name="index"
+											value="${i}"
+											type="submit"
+										>
+											Delete
+										</button>
+									</div>
+								</li>
+								`).join('')}
+							</ul>
+						</form>
+					</div>
+					` : null}}
+				</section>
+				<section class="column">
+					<form class="box" method="post">
+						<input type="hidden" name="_action" value="CREATE" />
+						<div class="field is-grouped">
+							<div class="control is-expanded">
+								<input
+									class="input"
+									required
+									placeholder="First name"
+									type="text"
+									name="firstName"
+								/>
+							</div>
+							<div class="control is-expanded">
+								<input
+									class="input"
+									required
+									placeholder="Last name"
+									type="text"
+									name="lastName"
+								/>
+							</div>
+							<div class="control">
+								<button class="button is-primary" type="submit">
+									Add a user
+								</button>
+							</div>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+	</body>
 </html>

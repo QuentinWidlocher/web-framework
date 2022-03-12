@@ -1,47 +1,65 @@
 <script server>
-  let form = { name: undefined };
-  if (req.method == 'POST') {
-    form = req.body;
-  }
+	let form = { name: undefined };
+	if (req.method == 'POST') {
+	  form = req.body;
+	}
 
-  let paragraphs = req.query.paragraphs ?? 10;
+	let paragraphs = req.query.paragraphs ?? 10;
 
-  return {
-    title: "Demo",
-    lorem: await fetch(`https://loripsum.net/api/${paragraphs}`).then(r => r.text()),
-    form,
-  }
+	return {
+	  title: "Demo",
+	   random: Math.random(),
+	  lorem: await fetch(`https://loripsum.net/api/${paragraphs}`).then(r => r.text()),
+	  form,
+	}
 </script>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="tailwind.min.css">
-  <title>{{title}}</title>
-</head>
-<body>
-  <main class="container mx-auto my-5">
-    <nav class="p-3 mb-5">
-      <a class="underline" href="/form">Example form</a>
-    </nav>
-    <h1 class="text-xl mb-3">Welcome to {{title}}</h1>
-    <ul class="my-5">
-      {{[1, 2, 3, 4].map((i) => 
-          `<li class="ml-3">item ${i}</li>`
-      )}}
-    </ul>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="bulma.min.css" />
+		<title>{{title}}</title>
+	</head>
+	<body>
+		<nav class="navbar is-primary mb-5">
+			<div class="navbar-brand">
+				<a class="navbar-item is-active" href="/">Home</a>
+				<a class="navbar-item" href="/form">Example form</a>
+			</div>
+		</nav>
 
-    <hr class="my-5">
+		<main class="container">
+			<h1 class="title mb-5">Welcome to {{title}}</h1>
 
-    <h2 class="text-lg mb-3">Here is some (server-side fetched) lorem ipsum :</h2>
-    <p>You can add a <span class="font-mono">?paragraphs=5</span> parameter in the url to change the number of rendered paragraphs</p>
-    
-    <section class="font-mono mt-5 text-gray-500">
-      {{lorem}}
-    </section>
-  </main>
-</body>
+			<hr class="my-5" />
+
+			<h2 class="subtitle">Conditional rendering</h2>
+			{{ random > 0.5 ? 'Tail' : 'Head' }}
+
+			<hr class="my-5" />
+
+			<h2 class="subtitle">List</h2>
+			<ul>
+				{{[1, 2, 3, 4].map((i) => `
+				<li>item ${i}</li>
+				` )}}
+			</ul>
+
+			<hr class="my-5" />
+
+			<h2 class="subtitle">Here is some (server-side fetched) lorem ipsum :</h2>
+			<p>
+				You can add a
+				<span class="is-family-monospace">?paragraphs=5</span> parameter in the
+				url to change the number of rendered paragraphs
+			</p>
+
+			<section class="is-family-monospace mt-5 has-text-gray">
+				{{lorem}}
+			</section>
+		</main>
+	</body>
 </html>
