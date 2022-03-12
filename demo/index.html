@@ -19,28 +19,29 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="tailwind.min.css">
   <title>{{title}}</title>
 </head>
 <body>
-  <h1>Welcome to {{title}}</h1>
-  <ul>
-    {{[1, 2, 3, 4].map((i) => 
-        `<li>item ${i}</li>`
-    )}}
-  </ul>
-  <span>{{(() => { return "oui" })()}}</span>
+  <main class="container mx-auto my-5">
+    <nav class="p-3 mb-5">
+      <a href="/form">Example form</a>
+    </nav>
+    <h1 class="text-xl mb-3">Welcome to {{title}}</h1>
+    <ul class="my-5">
+      {{[1, 2, 3, 4].map((i) => 
+          `<li class="ml-3">item ${i}</li>`
+      )}}
+    </ul>
 
-  <h2>Here is a form :</h2>
-  <form method="post">
-    {{form.name != null ? `<span>Hello ${form.name} !</span>` : ''}}
-    <input type="text" name="name" placeholder="Your name">
-    <input type="submit" value="Submit">
-  </form>
+    <hr class="my-5">
 
-  <hr>
-
-  <h2>Here is some (server-side fetched) lorem ipsum :</h2>
-  <span>You can add a <pre>?paragraphs=5</pre> parameter in the url to change the number of rendered paragraphs</span>
-  {{lorem}}
+    <h2 class="text-lg mb-3">Here is some (server-side fetched) lorem ipsum :</h2>
+    <p>You can add a <span class="font-mono">?paragraphs=5</span> parameter in the url to change the number of rendered paragraphs</p>
+    
+    <section class="font-mono mt-5 text-gray-500">
+      {{lorem}}
+    </section>
+  </main>
 </body>
 </html>

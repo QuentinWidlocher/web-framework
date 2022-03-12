@@ -1,0 +1,42 @@
+<script server>
+if (req.method == "POST") {
+  let formData = req.body;
+  global.users = [...(global.users ?? []), formData];
+  console.log(global.users)
+}
+
+return {
+  users: global.users
+}
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form</title>
+</head>
+<body>
+  <nav class="p-3 mb-5">
+      <a href="/">Home</a>
+    </nav>
+  <main class="container mx-auto my-5">
+    <div class="w-full frid grid-cols-2 grid-gaps-5">
+      <section>
+        <ul>
+          {{users.map((user) => `<li>${user.firstName} ${user.lastName}</li>`)}}
+        </ul>
+      </section>
+      <section>
+        <form method="post">
+          <input class="rounded border p-2" type="text" name="firstName">
+          <input class="rounded border p-2" type="text" name="lastName">
+          <button class="p-2 rounded bg-gray-200" type="submit">Ajouter</button>
+        </form>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
