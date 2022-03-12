@@ -1,12 +1,11 @@
 <script server>
 if (req.method == "POST") {
   let formData = req.body;
-  global.users = [...(global.users ?? []), formData];
-  console.log(global.users)
-}
-
-return {
-  users: global.users
+  if (formData._action == "CREATE") {
+    state.users = [...(state.users ?? []), formData];
+  } else if (formData._action == "DELETE") {
+    state.users = state.users.filter((_, i) => i != req.body.index);
+  } 
 }
 </script>
 
@@ -16,21 +15,31 @@ return {
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="tailwind.min.css">
   <title>Form</title>
 </head>
 <body>
-  <nav class="p-3 mb-5">
-      <a href="/">Home</a>
-    </nav>
   <main class="container mx-auto my-5">
+    <nav class="p-3 mb-5">
+      <a class="underline" href="/">Home</a>
+    </nav>
+
+    <h1 class="text-xl mb-5">Example CRUD</h1>
+
     <div class="w-full frid grid-cols-2 grid-gaps-5">
       <section>
-        <ul>
-          {{users.map((user) => `<li>${user.firstName} ${user.lastName}</li>`)}}
-        </ul>
+        <form method="post">
+          <input type="hidden" name="_action" value="DELETE">
+          <ul class="my-5">
+            {{state.users?.map((user, i) => `
+              <li class="border-b last:border-b-none p-1 flex justify-between">${user.firstName} ${user.lastName} <button class="p-2 rounded border border-red-500 text-red-500" name="index" value="${i}" type="submit">Delete</button></li>
+            `)}}
+          </ul>
+        </form>
       </section>
       <section>
         <form method="post">
+          <input type="hidden" name="_action" value="CREATE">
           <input class="rounded border p-2" type="text" name="firstName">
           <input class="rounded border p-2" type="text" name="lastName">
           <button class="p-2 rounded bg-gray-200" type="submit">Ajouter</button>

@@ -21,6 +21,9 @@ export function parse(template: string) {
 		serverScriptTag.remove();
 	}
 
+	// We create a state in this closure, so the server code can store data
+	let state = {};
+
 	// Now we can create a function that can render the page
 	let computeTemplate = async function (req: Request) {
 		// The "scope" is all the available variables in the template
@@ -28,6 +31,7 @@ export function parse(template: string) {
 			req, // The request (because it's full of useful information)
 			global, // The global variable (because it could be useful)
 			fetch, // The fetch function (to allow other sites to be fetched)
+			state, // The state variable (to store data)
 		};
 
 		// We create a function from the server script, and we provide the scope arguments
@@ -41,7 +45,7 @@ export function parse(template: string) {
 		// Here we parse the html and replace all the mustache with their expressions
 		// Every mustache has access to the bag and the request
 		let template = root.outerHTML.replace(/{{(.*?)}}/gs, (_, token) =>
-			parseExpression(bag, req, [...token].join(""))
+			parseExpression(bag ?? {}, req, state, [...token].join(""))
 		);
 
 		// We return the template as a string, it's completely
@@ -52,7 +56,12 @@ export function parse(template: string) {
 }
 
 // The is use to parse every mustache and replace it with the expression it declares
-function parseExpression(bag: Object, req: Request, code: string): string {
+function parseExpression(
+	bag: Object,
+	req: Request,
+	state: Object,
+	code: string
+): string {
 	// We'll need our bag keys and values to create a function and then execute it
 	let bagKeys = Object.keys(bag);
 	let bagValues = Object.values(bag);
@@ -60,11 +69,16 @@ function parseExpression(bag: Object, req: Request, code: string): string {
 	try {
 		// We try to create a function and we FORCE a return because
 		// mustaches must be expression, not imperative code
-		let inlineExpression = new Function("req", ...bagKeys, "return " + code);
+		let inlineExpression = new Function(
+			"req",
+			"state",
+			...bagKeys,
+			"return " + code
+		);
 
 		// We execute the function and return the result
 		// We default to an empty string if the result is empty
-		let result = inlineExpression(req, ...bagValues) ?? "";
+		let result = inlineExpression(req, state, ...bagValues) ?? "";
 
 		// If we get an array, we join it without any commas or anything
 		// so that we can easily map over values and return arrays of tags

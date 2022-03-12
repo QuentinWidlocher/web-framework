@@ -1,6 +1,7 @@
 import express from "express";
 import { opendir, readFile } from "fs/promises";
 import { parse } from "./parser.js";
+import { watch } from "fs";
 
 // Here we simply create default parameters for our server.
 let defaultConfig = {
@@ -13,12 +14,7 @@ let defaultConfig = {
 	},
 };
 
-// This is our server entrypoint
-export default async function run({
-	port = defaultConfig.port,
-	directory = defaultConfig.directory,
-	expressConfig = defaultConfig.expressConfig,
-} = defaultConfig) {
+async function start({ port, directory, expressConfig }: typeof defaultConfig) {
 	// First thing we do is create our express app.
 	const app = express();
 
@@ -47,18 +43,17 @@ export default async function run({
 			let routeName = splittedDirName[0].replace("index", "");
 			let fileName = nextDir.name;
 
+			// We read the file content
+			let fileBuffer = await readFile(`${directory}/${fileName}`);
+			let file = fileBuffer.toString();
+
+			// We parse the file content and create a function that can render the page
+			// This run only when the server is started, each visit to the route only
+			// uses this function to render the page
+			let computeTemplate = parse(file);
+
 			// We declare every http verb for this route
 			app.all(`/${routeName}`, async (req, res) => {
-				// We read the file content
-				let fileBuffer = await readFile(`${directory}/${fileName}`);
-				let file = fileBuffer.toString();
-
-				// We parse the file content and create a function that can render the page
-				// This could be above the app.all() to prevent parsing the file on each visit
-				// It would enhance performance but also disable the ability to edit the page
-				// while the server is running.
-				let computeTemplate = parse(file);
-
 				// We render the page	and returns it as html
 				let template = await computeTemplate(req);
 				res.setHeader("Content-Type", "text/html");
@@ -78,9 +73,24 @@ export default async function run({
 	}
 
 	// Now that each pages are declared we can start the server
-	app.listen(port, () => {
+	return app.listen(port, () => {
 		console.log(
 			`Your Web Framework is listening on port ${port} with ${pages} pages ready`
 		);
+	});
+}
+
+// This is our server entrypoint
+export default async function run({
+	port = defaultConfig.port,
+	directory = defaultConfig.directory,
+	expressConfig = defaultConfig.expressConfig,
+} = defaultConfig) {
+	// We start once and then we watch the directory for changes
+	let server = await start({ port, directory, expressConfig });
+
+	watch(directory, async () => {
+		server.close();
+		server = await start({ port, directory, expressConfig });
 	});
 }
