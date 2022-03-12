@@ -8,7 +8,7 @@
 
 	return {
 	  title: "Demo",
-	   random: Math.random(),
+	  random: Math.random(),
 	  lorem: await fetch(`https://loripsum.net/api/${paragraphs}`).then(r => r.text()),
 	  form,
 	}
@@ -21,7 +21,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="bulma.min.css" />
-		<title>{{title}}</title>
+		<title>${title}</title>
 	</head>
 	<body>
 		<nav class="navbar is-primary mb-5">
@@ -32,20 +32,20 @@
 		</nav>
 
 		<main class="container">
-			<h1 class="title mb-5">Welcome to {{title}}</h1>
+			<h1 class="title mb-5">Welcome to ${title}</h1>
 
 			<hr class="my-5" />
 
 			<h2 class="subtitle">Conditional rendering</h2>
-			{{ random > 0.5 ? 'Tail' : 'Head' }}
+			${ random > 0.5 ? 'Tail' : 'Head' }
 
 			<hr class="my-5" />
 
 			<h2 class="subtitle">List</h2>
 			<ul>
-				{{[1, 2, 3, 4].map((i) => `
+				${[1, 2, 3, 4].map((i) => `
 				<li>item ${i}</li>
-				` )}}
+				` ).join('')}
 			</ul>
 
 			<hr class="my-5" />
@@ -57,9 +57,7 @@
 				url to change the number of rendered paragraphs
 			</p>
 
-			<section class="is-family-monospace mt-5 has-text-gray">
-				{{lorem}}
-			</section>
+			<section class="is-family-monospace mt-5 has-text-gray">${lorem}</section>
 		</main>
 	</body>
 </html>

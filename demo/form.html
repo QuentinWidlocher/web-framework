@@ -51,7 +51,7 @@
 
 			<div class="columns">
 				<section class="column">
-					{{state.users?.length > 0 ? `
+					${state.users?.length > 0 ? `
 					<div class="box">
 						<form method="get">
 							<div class="field has-addons mb-5">
@@ -91,7 +91,7 @@
 							</ul>
 						</form>
 					</div>
-					` : null}}
+					` : ""}
 				</section>
 				<section class="column">
 					<form class="box" method="post">

@@ -42,21 +42,20 @@ I also want to create a course, to explain how to use this, but also how it does
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="tailwind.min.css" />
-		<title>{{title}}</title>
+		<title>${title}</title>
 	</head>
 	<body>
 		<main>
-			<h1>Welcome to {{title}}</h1>
+			<h1>Welcome to ${title}</h1>
 			<ul>
-				{{[1, 2, 3, 4].map((i) => `
+				${[1, 2, 3, 4].map((i) => `
 				<li>item ${i}</li>
-				` )}}
+				`).join('')}
 			</ul>
 
 			<h2>Here is a form :</h2>
 			<form method="post">
-				{{form?.name != null ? `<span>Hello ${form.name} !</span>` : ''}}
+				${form?.name != null ? `<span>Hello ${form.name} !</span>` : ''}
 				<input type="text" name="name" placeholder="Your name" />
 				<button type="submit">Submit</button>
 			</form>
@@ -69,7 +68,7 @@ I also want to create a course, to explain how to use this, but also how it does
 				rendered paragraphs
 			</p>
 
-			<section>{{lorem}}</section>
+			<section>${lorem}</section>
 		</main>
 	</body>
 </html>
@@ -138,27 +137,25 @@ If you need to share data between routes, you can use the `global` variable (but
 Of course, to build a web page, you need a templating system to display your data.  
 I always found the templating system in PHP pretty hard to write and to read.
 
-Coming from a React ecosystem, I used a functional templating system to save me some headaches. You can use {{mustaches}} to insert **an expression** that will be displayed (I'd love to change this to a javascript-like interpolation later though).
-
-I insist, it's an **expression**, meaning you **have** to return something if you want to display it.
+Coming from a React ecosystem, I used a functional templating system to save me some headaches. You can use ${templateLiterals} to insert an expression that will be displayed.
 
 ```html
-<h1>Welcome to {{ title }}</h1>
+<h1>Welcome to ${title}</h1>
 ```
 
 If you want to conditionally display something, you'll need to compute it beforehand in a variable or use a ternary (JSX-style !)
 
 ```html
-<div>{{ user ? user.name : "Anonymous" }}</div>
+<div>${user ? user.name : "Anonymous"}</div>
 ```
 
 If you want to iterate over something and display the items, you'll need to compute it beforehand in a variable or use a map (JSX-style !)
 
 ```html
 <ul>
-	{{ items.map(i => `
+	${items.map(i => `
 	<li>${i}</li>
-	`) }}
+	`)}
 </ul>
 ```
 
@@ -190,7 +187,7 @@ An Express server will start, you can configure it with an object parameter. (yo
 - [x] A well commented code for curious people
 - [x] Add watch mode to the server
 - [x] Add a in-memory state for the routes
-- [ ] Use ${} for templates instead of {{}}
+- [x] Use ${} for templates instead of {{}}
 - [ ] An article to explain this to beginners
 - [ ] Import "components" with server code
 
