@@ -15,6 +15,7 @@ async function start({ port, directory, expressConfig }) {
     let dir = await opendir(directory);
     let nextDir = await dir.read();
     let pages = 0;
+    let assets = 0;
     while (nextDir != null) {
         let splittedDirName = nextDir.name.split(".");
         if (nextDir.name == "server.js") {
@@ -27,6 +28,7 @@ async function start({ port, directory, expressConfig }) {
             let fileBuffer = await readFile(`${directory}/${fileName}`);
             let file = fileBuffer.toString();
             let computeTemplate = parse(file);
+            pages++;
             app.all(`/${routeName}`, async (req, res) => {
                 let template = await computeTemplate(req);
                 res.setHeader("Content-Type", "text/html");
@@ -34,19 +36,23 @@ async function start({ port, directory, expressConfig }) {
             });
         }
         else {
+            assets++;
             app.use(`/${nextDir.name}`, express.static(`${directory}/${nextDir.name}`));
         }
         nextDir = await dir.read();
-        pages++;
     }
     return app.listen(port, () => {
-        console.log(`Your Web Framework is listening on port ${port} with ${pages} pages ready`);
+        console.log(`Listening on port ${port} with ${pages} pages and ${assets} assets`);
+        console.log(`Visit http://localhost:${port}`);
     });
 }
 export default async function run({ port = defaultConfig.port, directory = defaultConfig.directory, expressConfig = defaultConfig.expressConfig, } = defaultConfig) {
     let server = await start({ port, directory, expressConfig });
-    watch(directory, async () => {
-        server.close();
-        server = await start({ port, directory, expressConfig });
+    watch(directory, async (_, file) => {
+        console.log(`${file} changed, restarting server`);
+        console.log("--------------------------------------");
+        server.close().on("close", async () => {
+            server = await start({ port, directory, expressConfig });
+        });
     });
 }

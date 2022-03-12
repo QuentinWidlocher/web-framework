@@ -27,6 +27,7 @@ async function start({ port, directory, expressConfig }: typeof defaultConfig) {
 	// We loop over all the files in the directory
 	let nextDir = await dir.read();
 	let pages = 0;
+	let assets = 0;
 	while (nextDir != null) {
 		let splittedDirName = nextDir.name.split(".");
 
@@ -52,6 +53,8 @@ async function start({ port, directory, expressConfig }: typeof defaultConfig) {
 			// uses this function to render the page
 			let computeTemplate = parse(file);
 
+			pages++;
+
 			// We declare every http verb for this route
 			app.all(`/${routeName}`, async (req, res) => {
 				// We render the page	and returns it as html
@@ -60,6 +63,8 @@ async function start({ port, directory, expressConfig }: typeof defaultConfig) {
 				res.send(template);
 			});
 		} else {
+			assets++;
+
 			// If the file is not an html file, we just serve it
 			app.use(
 				`/${nextDir.name}`,
@@ -67,16 +72,15 @@ async function start({ port, directory, expressConfig }: typeof defaultConfig) {
 			);
 		}
 
-		// We increment the number of pages for information purposes
 		nextDir = await dir.read();
-		pages++;
 	}
 
 	// Now that each pages are declared we can start the server
 	return app.listen(port, () => {
 		console.log(
-			`Your Web Framework is listening on port ${port} with ${pages} pages ready`
+			`Listening on port ${port} with ${pages} pages and ${assets} assets`
 		);
+		console.log(`Visit http://localhost:${port}`);
 	});
 }
 
@@ -89,8 +93,11 @@ export default async function run({
 	// We start once and then we watch the directory for changes
 	let server = await start({ port, directory, expressConfig });
 
-	watch(directory, async () => {
-		server.close();
-		server = await start({ port, directory, expressConfig });
+	watch(directory, async (_, file) => {
+		console.log(`${file} changed, restarting server`);
+		console.log("--------------------------------------");
+		server.close().on("close", async () => {
+			server = await start({ port, directory, expressConfig });
+		});
 	});
 }

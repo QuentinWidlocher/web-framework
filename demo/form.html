@@ -7,7 +7,7 @@
 			formData.lastName
 		) {
 			state.users = [...(state.users ?? []), formData];
-		} else if (formData._action == "DELETE") {
+		} else if (formData._action == "DELETE" && state.users) {
 			state.users = state.users.filter((_, i) => i != req.body.index);
 		}
 	}
