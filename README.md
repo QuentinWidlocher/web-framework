@@ -232,12 +232,12 @@ index.html
 You will then have these routes :
 
 ```
-/						-> ./index.html
-/form				-> ./form.html
-/nested			-> ./nested/index.html
-/nested/a		-> ./nested/a.html
-/nested/b		-> ./nested/b.html
-/nested/c		-> ./nested/c.html
+/		-> ./index.html
+/form		-> ./form.html
+/nested		-> ./nested/index.html
+/nested/a	-> ./nested/a.html
+/nested/b	-> ./nested/b.html
+/nested/c	-> ./nested/c.html
 ```
 
 ## To-do
