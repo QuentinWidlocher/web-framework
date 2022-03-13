@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/bulma.min.css" />
+		<title>Nested base</title>
+	</head>
+	<body>
+		<nav class="navbar is-primary mb-5">
+			<div class="navbar-brand">
+				<a class="navbar-item" href="/">Home</a>
+				<a class="navbar-item" href="/form">Example form</a>
+				<a class="navbar-item is-active" href="/nested">Nested routes</a>
+			</div>
+		</nav>
+		<main class="container">
+			<h1 class="title">Nested route</h1>
+
+			<h2 class="subtitle">You're at the base of the nested routes</h2>
+
+			<nav class="navbar">
+				<div class="navbar-brand">
+					<a href="/nested/A" class="navbar-item">Nested route A</a>
+					<a href="/nested/B" class="navbar-item">Nested route B</a>
+					<a href="/nested/C" class="navbar-item">Nested route C</a>
+				</div>
+			</nav>
+		</main>
+	</body>
+</html>

@@ -213,6 +213,33 @@ import("your-web-framework").then((web) => web.default());
 
 An Express server will start, you can configure it with an object parameter. (you can look at [the code](./src/index.ts) to see the parameters)
 
+### Nested routes
+
+You can put routes inside of folders to create nested routes. `index.html` will always be the base of a route.
+
+Let's say you have these files :
+
+```
+nested/
+	a.html
+	b.html
+	c.html
+	index.html
+form.html
+index.html
+```
+
+You will then have these routes :
+
+```
+/						-> ./index.html
+/form				-> ./form.html
+/nested			-> ./nested/index.html
+/nested/a		-> ./nested/a.html
+/nested/b		-> ./nested/b.html
+/nested/c		-> ./nested/c.html
+```
+
 ## To-do
 
 - [x] Templating system
@@ -222,6 +249,8 @@ An Express server will start, you can configure it with an object parameter. (yo
 - [x] Add watch mode to the server
 - [x] Add a in-memory state for the routes
 - [x] Use ${} for templates instead of {{}}
+- [x] Create a package on npm (`your-web-framework`)
+- [x] Add nested routes
 - [ ] An article to explain this to beginners
 - [ ] Import "components" with server code
 

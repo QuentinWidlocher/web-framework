@@ -1,46 +1,51 @@
 import express from "express";
-import { opendir, readFile } from "fs/promises";
+import { readFile } from "fs/promises";
 import { parse } from "./parser.js";
 import { watch } from "fs";
+import { execFile } from "child_process";
 let defaultConfig = {
     port: 3000,
-    directory: "./",
+    directory: ".",
     expressConfig: (app) => {
         app.use(express.urlencoded({ extended: true }));
     },
 };
 async function start({ port, directory, expressConfig }) {
+    directory = directory.replace(/\/$/, "");
     const app = express();
     expressConfig(app);
-    let dir = await opendir(directory);
-    let nextDir = await dir.read();
     let pages = 0;
     let assets = 0;
-    while (nextDir != null) {
-        let splittedDirName = nextDir.name.split(".");
-        if (nextDir.name == "server.js") {
-            nextDir = await dir.read();
-            continue;
-        }
-        if (splittedDirName[splittedDirName.length - 1] == "html") {
-            let routeName = splittedDirName[0].replace("index", "");
-            let fileName = nextDir.name;
-            let fileBuffer = await readFile(`${directory}/${fileName}`);
-            let file = fileBuffer.toString();
-            let computeTemplate = parse(file);
-            pages++;
-            app.all(`/${routeName}`, async (req, res) => {
-                let template = await computeTemplate(req);
-                res.setHeader("Content-Type", "text/html");
-                res.send(template);
-            });
-        }
-        else {
-            assets++;
-            app.use(`/${nextDir.name}`, express.static(`${directory}/${nextDir.name}`));
-        }
-        nextDir = await dir.read();
-    }
+    await new Promise((resolve) => {
+        execFile("find", [directory], async (err, stdout, stderr) => {
+            let filesList = stdout.split("\n");
+            for (let filePath of filesList) {
+                let file = filePath.replace(`${directory}/`, "");
+                if (file == "server.js" || file == "") {
+                    continue;
+                }
+                let splittedDirName = file.split(".");
+                if (splittedDirName[splittedDirName.length - 1] == "html") {
+                    let routeName = splittedDirName[0].replace("index", "");
+                    let fileName = file;
+                    let fileBuffer = await readFile(`${directory}/${fileName}`);
+                    let fileContent = fileBuffer.toString();
+                    let computeTemplate = parse(fileContent);
+                    pages++;
+                    app.all(`/${routeName}`, async (req, res) => {
+                        let template = await computeTemplate(req);
+                        res.setHeader("Content-Type", "text/html");
+                        res.send(template);
+                    });
+                }
+                else {
+                    assets++;
+                    app.use(`/${file}`, express.static(`${directory}/${file}`));
+                }
+            }
+            resolve();
+        });
+    });
     return app.listen(port, () => {
         console.log(`Listening on port ${port} with ${pages} pages and ${assets} assets`);
         console.log(`Visit http://localhost:${port}`);
