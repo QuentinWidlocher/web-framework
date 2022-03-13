@@ -1,7 +1,7 @@
 import express from "express";
 import { opendir, readFile } from "fs/promises";
 import { parse } from "./parser.js";
-import { watch } from "fs";
+import chokidar from "chokidar";
 import { execFile } from "child_process";
 
 // Here we simply create default parameters for our server.
@@ -96,7 +96,7 @@ export default async function run({
 	// We start once and then we watch the directory for changes
 	let server = await start({ port, directory, expressConfig });
 
-	watch(directory, async (_, file) => {
+	chokidar.watch(directory).on("change", async (file) => {
 		console.log(`${file} changed, restarting server`);
 		console.log("--------------------------------------");
 		server.close().on("close", async () => {
