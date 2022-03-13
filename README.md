@@ -18,7 +18,31 @@ This small framework is a way to teach people how to create websites, with a rat
 
 I also want to create a course, to explain how to use this, but also how it does work behind the scenes.
 
-## Example page
+## Getting started
+
+### Install the framework
+
+With npm :
+
+```bash
+npm i --save your-web-framework
+```
+
+With yarn :
+
+```bash
+yarn add your-web-framework
+```
+
+### Add a `server.js` file
+
+```js
+import("your-web-framework").then((web) => web.default());
+```
+
+Now add pages and run `node server.js`
+
+### Example page
 
 ```html
 <script server>
@@ -184,9 +208,7 @@ To serve different pages, create your html pages with your server code somewhere
 Now, to run your server, create a `./server.js` and import and run the framework :
 
 ```js
-import runWebServer from "web-framework";
-
-runWebServer();
+import("your-web-framework").then((web) => web.default());
 ```
 
 An Express server will start, you can configure it with an object parameter. (you can look at [the code](./src/index.ts) to see the parameters)

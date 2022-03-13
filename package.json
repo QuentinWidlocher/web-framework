@@ -1,8 +1,8 @@
 {
-  "name": "web-framework",
-  "version": "1.0.0",
+  "name": "your-web-framework",
+  "version": "1.0.2",
   "main": "index.js",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "scripts": {
     "build": "tsc",
     "demo": "cd ./demo && node server.js ; cd ..",
