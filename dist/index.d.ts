@@ -1,3 +1,5 @@
+import { RenderFunctionToExec } from "./parser.js";
+export declare type Component = RenderFunctionToExec;
 export default function run({ port, directory, expressConfig, }?: {
     port: number;
     directory: string;

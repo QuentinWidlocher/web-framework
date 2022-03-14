@@ -1,0 +1,33 @@
+<script server>
+	return {
+		layout: await getComponent("layout"),
+	}
+</script>
+
+${await layout({title: `Demo | Nested ${props.routeName}`}, `
+<main class="container">
+	<h1 class="title">Nested routes</h1>
+
+	<h2 class="subtitle">You're at ${props.routeName}</h2>
+
+	<nav class="navbar">
+		<div class="navbar-brand">
+			<a
+				href="/nested/A"
+				class="navbar-item ${req.path == '/nested/A' ? 'has-text-primary' : ''}"
+				>Nested route A</a
+			>
+			<a
+				href="/nested/B"
+				class="navbar-item ${req.path == '/nested/B' ? 'has-text-primary' : ''}"
+				>Nested route B</a
+			>
+			<a
+				href="/nested/C"
+				class="navbar-item ${req.path == '/nested/C' ? 'has-text-primary' : ''}"
+				>Nested route C</a
+			>
+		</div>
+	</nav>
+</main>
+`)}

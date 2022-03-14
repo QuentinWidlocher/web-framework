@@ -14,32 +14,47 @@ async function start({ port, directory, expressConfig }) {
     directory = directory.replace(/\/$/, "");
     const app = express();
     expressConfig(app);
-    let pages = 0;
-    let assets = 0;
+    let componentNb = 0;
+    let pageNb = 0;
+    let assetNb = 0;
+    let components = {};
     await new Promise((resolve) => {
-        execFile("find", [directory], async (err, stdout, stderr) => {
+        execFile("find", [directory, "-name", "*.*"], async (err, stdout, stderr) => {
             let filesList = stdout.split("\n");
             for (let filePath of filesList) {
                 let file = filePath.replace(`${directory}/`, "");
                 if (file == "server.js" || file == "") {
                     continue;
                 }
-                let splittedDirName = file.split(".");
-                if (splittedDirName[splittedDirName.length - 1] == "html") {
-                    let routeName = splittedDirName[0].replace("index", "");
-                    let fileName = file;
-                    let fileBuffer = await readFile(`${directory}/${fileName}`);
+                if (file.endsWith(".html")) {
+                    let routeName = file
+                        .replace(".html", "")
+                        .replace("index", "")
+                        .replace(/\/$/m, "");
+                    let fileBuffer = await readFile(`${directory}/${file}`);
                     let fileContent = fileBuffer.toString();
-                    let computeTemplate = parse(fileContent);
-                    pages++;
-                    app.all(`/${routeName}`, async (req, res) => {
-                        let template = await computeTemplate(req);
-                        res.setHeader("Content-Type", "text/html");
-                        res.send(template);
-                    });
+                    if (file.includes("$") && file.endsWith(".html")) {
+                        componentNb++;
+                        let componentName = routeName.replace("$", "");
+                        console.debug("Registering Component :", componentName);
+                        let computeComponent = parse(fileContent, components);
+                        components[componentName] = computeComponent;
+                    }
+                    else {
+                        pageNb++;
+                        console.debug(`Registering Page : /${routeName} to ${directory}/${file}`);
+                        let computeTemplate = parse(fileContent, components);
+                        app.all(`/${routeName}`, async (req, res) => {
+                            console.debug("Serving route", routeName);
+                            let template = await computeTemplate(req);
+                            res.setHeader("Content-Type", "text/html");
+                            res.send(template);
+                        });
+                    }
                 }
                 else {
-                    assets++;
+                    assetNb++;
+                    console.debug("Registering Asset :", file);
                     app.use(`/${file}`, express.static(`${directory}/${file}`));
                 }
             }
@@ -47,8 +62,10 @@ async function start({ port, directory, expressConfig }) {
         });
     });
     return app.listen(port, () => {
-        console.log(`Listening on port ${port} with ${pages} pages and ${assets} assets`);
+        console.log("");
+        console.log(`Listening on port ${port} with ${pageNb} pages, ${assetNb} assets and ${componentNb} components`);
         console.log(`Visit http://localhost:${port}`);
+        console.log("--------------------------------------");
     });
 }
 export default async function run({ port = defaultConfig.port, directory = defaultConfig.directory, expressConfig = defaultConfig.expressConfig, } = defaultConfig) {

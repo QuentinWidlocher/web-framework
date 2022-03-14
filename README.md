@@ -240,6 +240,169 @@ You will then have these routes :
 /nested/c	-> ./nested/c.html
 ```
 
+## Components
+
+Of course, you'll want to avoid repeating similar code. Think about the doctype and the head of your pages, they'll probably always be the same, minus some differences here and there.
+
+You can use components to "import" chunks of code and pass them properties (`props`) so they can save you some time.
+
+To import a component in your template, you'll need to declare it in your server code with then provided `getComponent()` function and pass it to the template via the bag.  
+You can then render your component by `await`ing it (since it can contain asynchronous code too)
+
+```html
+<script server>
+	// Here we create a function that can render our component
+	// getComponent() only take the name of you component
+	let myComp = getComponent("my-component");
+
+	return {
+		myComp,
+	};
+</script>
+
+<main>${ await myComp() }</main>
+```
+
+### Component names
+
+In this example the name `my-component` comes from a file name `$my-component.html` at the root of the server.  
+The `$` symbol tells the framework not to serve this page, but to register it as an available component.
+
+You can store your components wherever you want and refer to them by their route :
+
+```
+'./$compA' 						-> getComponent('compA');
+'./directory/$compB' 	-> getComponent('directory/compB'),
+```
+
+### Component props
+
+You can provide dynamic values to your components when you display them in your template.  
+A component function takes an object as its first argument, its props.
+
+```html
+<!-- ./index.html -->
+<script server>
+	return {
+		myComp: await getComponent('my-comp')
+	}
+</script>
+
+${ await myComp({ title: "Home", subtitle: "Welcome !" })}
+```
+
+Now, your component can access its props via the `props` variable (available in your server script and your expressions) :
+
+```html
+<!-- ./$my-comp.html -->
+<main>
+	<h1>${ props.title }</h1>
+	<h2>${ props.subtitle }</h2>
+</main>
+```
+
+This will then render :
+
+```html
+<main>
+	<h1>Hello</h1>
+	<h2>Welcome !</h2>
+</main>
+```
+
+### Component outlet and children
+
+Back to our previous problem, avoiding the duplication of the doctype and the head, we could create a component like this :
+
+```html
+<!-- ./index.html -->
+<script server>
+	return {
+		layout: await getComponent('layout')
+	}
+</script>
+
+${ await layout({ title: "My awesome website" })}
+```
+
+```html
+<!-- ./$layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/bulma.min.css" />
+		<title>${props.title}</title>
+	</head>
+	<body></body>
+</html>
+```
+
+And that would be great because our `<title/>` tag would get the right value, depending on the page.  
+But what about the _content_ of the page ? How can we put our content _inside_ the `<body/>` ?
+
+That's where the `<outlet/>` and the `children` comes into play.  
+Our component can declare an `<outlet/>` tag somewhere that will be replaced by some other content.
+
+This other content are named the `children` of the component and are passed as the second argument when displaying a component.  
+This argument can be a template string without any problem.
+
+```html
+<!-- ./index.html -->
+<script server>
+	return {
+		layout: await getComponent('layout'),
+	}
+</script>
+
+${ await layout({ title: "My awesome website" }, `
+<h1>Welcome !</h1>
+
+<nav>
+	<a href="/page2">Page 2</a>
+</nav>
+`)}
+```
+
+```html
+<!-- ./$layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>${props.title}</title>
+	</head>
+	<body>
+		<outlet />
+	</body>
+</html>
+```
+
+This will then display :
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>My awesome website</title>
+	</head>
+	<body>
+		<h1>Welcome !</h1>
+
+		<nav>
+			<a href="/page2">Page 2</a>
+		</nav>
+	</body>
+</html>
+```
+
 ## To-do
 
 - [x] Templating system
@@ -251,7 +414,9 @@ You will then have these routes :
 - [x] Use ${} for templates instead of {{}}
 - [x] Create a package on npm (`your-web-framework`)
 - [x] Add nested routes
+- [x] Import "components" with server code
+- [ ] Add route parameters
+- [ ] Add named outlets
 - [ ] An article to explain this to beginners
-- [ ] Import "components" with server code
 
 Suggestions and pull requests are welcome of course !

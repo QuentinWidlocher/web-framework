@@ -1,0 +1,17 @@
+<script server>
+	return {
+		url: req.path,
+	};
+</script>
+
+<nav class="navbar is-primary mb-5">
+	<div class="navbar-brand">
+		<a class="navbar-item ${url == '/' ? 'is-active' : ''}" href="/">Home</a>
+		<a class="navbar-item ${url == '/form' ? 'is-active' : ''}" href="/form"
+			>Example form</a
+		>
+		<a class="navbar-item ${url == '/nested' ? 'is-active' : ''}" href="/nested"
+			>Nested routes</a
+		>
+	</div>
+</nav>
