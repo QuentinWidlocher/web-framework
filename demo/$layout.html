@@ -15,8 +15,6 @@
 	</head>
 	<body>
 		${await navbar()}
-		<main class="container">
-			<outlet />
-		</main>
+		<main class="container">${props.children ?? ''}</main>
 	</body>
 </html>

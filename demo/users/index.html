@@ -5,9 +5,9 @@
 	}
 </script>
 
-${ await layout({title: 'Demo | Users'}, `
+${ await layout({title: 'Demo | Users', children: `
 <h1 class="title">User list</h1>
 <h2 class="subtitle">Based on the example form</h2>
 
 <div class="box">${ await userList({users: global.users}) }</div>
-`) }
+`}) }

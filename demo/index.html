@@ -18,7 +18,7 @@
 	}
 </script>
 
-${ await layout({title}, `
+${ await layout({title, children: `
 <h1 class="title mb-5">Welcome to ${title}</h1>
 
 <hr class="my-5" />
@@ -45,4 +45,4 @@ ${ random > 0.5 ? 'Tail' : 'Head' }
 </p>
 
 <section class="is-family-monospace mt-5 has-text-gray">${lorem}</section>
-`) }
+`}) }

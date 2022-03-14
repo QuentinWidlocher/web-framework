@@ -81,7 +81,7 @@ async function start({ port, directory, expressConfig }: typeof defaultConfig) {
 
 							// We declare every http verb for this route
 							app.all(`/${routeName}`, async (req, res) => {
-								console.debug("Serving route", routeName);
+								console.debug("Serving route", "/" + routeName);
 
 								// We render the page	and returns it as html
 								try {

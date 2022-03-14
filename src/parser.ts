@@ -66,6 +66,16 @@ export function parse(
 		render(req, state, components, html, serverScript, props, children);
 }
 
+async function getComponent(
+	name: string,
+	parentReq: Request,
+	components: Record<string, Component>
+) {
+	return async function (props: Object = {}, children: string) {
+		return components[name](parentReq, props, children);
+	};
+}
+
 async function render(
 	req: Request,
 	state: Object,
@@ -75,12 +85,6 @@ async function render(
 	props?: Object,
 	children?: string
 ): Promise<string> {
-	async function getComponent(name: string, parentReq: Request) {
-		return async function (props: Object = {}, children: string) {
-			return components[name](parentReq, props, children);
-		};
-	}
-
 	// The "scope" is all the available variables in the template
 	let scope = {
 		req, // The request (because it's full of useful information)
@@ -88,7 +92,7 @@ async function render(
 		global, // The global variable (because it could be useful)
 		fetch, // The fetch function (to allow other sites to be fetched)
 		state, // The state variable (to store data)
-		getComponent: (name: string) => getComponent(name, req),
+		getComponent: (name: string) => getComponent(name, req, components),
 	};
 
 	// We create a function from the server script, and we provide the scope arguments

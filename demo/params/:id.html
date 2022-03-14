@@ -4,10 +4,10 @@
 	}
 </script>
 
-${ await layout({title: 'Parameter route'}, `
+${ await layout({title: 'Demo | Parameter route', children: `
 <h1>Base parameter route</h1>
 <span
 	>Since we are on "/params/${ req.params.id }", the parameter is ${
 	req.params.id }</span
 >
-`) }
+`}) }

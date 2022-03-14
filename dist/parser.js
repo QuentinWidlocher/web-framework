@@ -20,19 +20,19 @@ export function parse(template, components) {
     let state = {};
     return (req, props, children) => render(req, state, components, html, serverScript, props, children);
 }
+async function getComponent(name, parentReq, components) {
+    return async function (props = {}, children) {
+        return components[name](parentReq, props, children);
+    };
+}
 async function render(req, state, components, html, serverScript, props, children) {
-    async function getComponent(name, parentReq) {
-        return async function (props = {}, children) {
-            return components[name](parentReq, props, children);
-        };
-    }
     let scope = {
         req,
         props,
         global,
         fetch,
         state,
-        getComponent: (name) => getComponent(name, req),
+        getComponent: (name) => getComponent(name, req, components),
     };
     let serverFunction = new AsyncFunction(Object.keys(scope), serverScript);
     let bag = await serverFunction(...Object.values(scope));

@@ -10,10 +10,14 @@
 		<a class="navbar-item ${url == '/form' ? 'is-active' : ''}" href="/form"
 			>Example form</a
 		>
-		<a class="navbar-item ${url == '/nested' ? 'is-active' : ''}" href="/nested"
+		<a
+			class="navbar-item ${url.startsWith('/nested') ? 'is-active' : ''}"
+			href="/nested"
 			>Nested routes</a
 		>
-		<a class="navbar-item ${url == '/users' ? 'is-active' : ''}" href="/users"
+		<a
+			class="navbar-item ${url.startsWith('/users') ? 'is-active' : ''}"
+			href="/users"
 			>Users</a
 		>
 	</div>

@@ -333,44 +333,9 @@ This will then render :
 </main>
 ```
 
-### Component outlet and children
+### Component children
 
-Back to our previous problem, avoiding the duplication of the doctype and the head, we could create a component like this :
-
-```html
-<!-- ./index.html -->
-<script server>
-	return {
-		layout: await getComponent('layout')
-	}
-</script>
-
-${ await layout({ title: "My awesome website" })}
-```
-
-```html
-<!-- ./$layout.html -->
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="/bulma.min.css" />
-		<title>${props.title}</title>
-	</head>
-	<body></body>
-</html>
-```
-
-And that would be great because our `<title/>` tag would get the right value, depending on the page.  
-But what about the _content_ of the page ? How can we put our content _inside_ the `<body/>` ?
-
-That's where the `<outlet/>` and the `children` comes into play.  
-Our component can declare an `<outlet/>` tag somewhere that will be replaced by some other content.
-
-This other content are named the `children` of the component and are passed as the second argument when displaying a component.  
-This argument can be a template string without any problem.
+Back to our previous problem, to avoid duplication of the doctype and the head, we could create a component that takes a body prop (named here `children` like in React, but you can name it whatever) and displays it in the right place:
 
 ```html
 <!-- ./index.html -->
@@ -380,7 +345,7 @@ This argument can be a template string without any problem.
 	}
 </script>
 
-${ await layout({ title: "My awesome website" }, `
+${ await layout({ title: "My awesome website", children: `
 <h1>Welcome !</h1>
 
 <nav>
@@ -400,7 +365,7 @@ ${ await layout({ title: "My awesome website" }, `
 		<title>${props.title}</title>
 	</head>
 	<body>
-		<outlet />
+		${props.children}
 	</body>
 </html>
 ```
@@ -438,7 +403,6 @@ This will then display :
 - [x] Create a package on npm (`your-web-framework`)
 - [x] Add nested routes
 - [x] Import "components" with server code
-- [ ] Add named outlets
 - [ ] An article to explain this to beginners
 
 Suggestions and pull requests are welcome of course !

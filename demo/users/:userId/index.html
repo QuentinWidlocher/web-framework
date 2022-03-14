@@ -6,7 +6,7 @@
 	}
 </script>
 
-${ await layout({title: 'Demo | Deep nested routes'}, user != null ? `
+${ await layout({title: 'Demo | Deep nested routes', children: user != null ? `
 <h1 class="title">${user.firstName} ${user.lastName}</h1>
 <form id="link" action="" method="get">
 	<div class="field has-addons">
@@ -21,7 +21,7 @@ ${ await layout({title: 'Demo | Deep nested routes'}, user != null ? `
 </form>
 <h1 class="title">Sorry</h1>
 <h2 class="subtitle">No user were found with this id</h2>
-<a href="/form" class="button is-link">Try to create one</a>` )}
+<a href="/form" class="button is-link">Try to create one</a>` })}
 
 <script>
 	let formTag = document.querySelector("#link");

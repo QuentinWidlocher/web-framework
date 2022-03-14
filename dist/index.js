@@ -45,7 +45,7 @@ async function start({ port, directory, expressConfig }) {
                         console.debug(`Registering Page : /${routeName} to ${directory}/${file}`);
                         let computeTemplate = parse(fileContent, components);
                         app.all(`/${routeName}`, async (req, res) => {
-                            console.debug("Serving route", routeName);
+                            console.debug("Serving route", "/" + routeName);
                             try {
                                 let template = await computeTemplate(req);
                                 res.setHeader("Content-Type", "text/html");

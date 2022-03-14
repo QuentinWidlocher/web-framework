@@ -4,7 +4,7 @@
 	}
 </script>
 
-${await layout({title: `Demo | Nested ${props.routeName}`}, `
+${await layout({title: `Demo | Nested ${props.routeName}`, children : `
 <h1 class="title">Nested routes</h1>
 
 <h2 class="subtitle">You're at ${props.routeName}</h2>
@@ -28,4 +28,4 @@ ${await layout({title: `Demo | Nested ${props.routeName}`}, `
 		>
 	</div>
 </nav>
-`)}
+`})}
