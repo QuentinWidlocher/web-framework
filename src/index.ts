@@ -84,9 +84,15 @@ async function start({ port, directory, expressConfig }: typeof defaultConfig) {
 								console.debug("Serving route", routeName);
 
 								// We render the page	and returns it as html
-								let template = await computeTemplate(req);
-								res.setHeader("Content-Type", "text/html");
-								res.send(template);
+								try {
+									let template = await computeTemplate(req);
+									res.setHeader("Content-Type", "text/html");
+									res.send(template);
+								} catch (error) {
+									console.error(error);
+									res.setHeader("Content-Type", "text/html");
+									res.send(error);
+								}
 							});
 						}
 					} else {
@@ -127,7 +133,17 @@ export default async function run({
 		console.log(`${file} changed, restarting server`);
 		console.log("--------------------------------------");
 		server.close().on("close", async () => {
-			server = await start({ port, directory, expressConfig });
+			try {
+				server = await start({ port, directory, expressConfig });
+			} catch (error) {
+				if (isError(error) && error.code != "EADDRINUSE") {
+					console.error(error);
+				}
+			}
 		});
 	});
+}
+
+function isError(error: any): error is NodeJS.ErrnoException {
+	return error instanceof Error;
 }

@@ -1,0 +1,18 @@
+<script server>
+	return {
+	  userId: req.params.userId,
+	  bookId: req.params.bookId,
+		user: global.users[req.params.userId],
+	  layout: await getComponent("layout"),
+	}
+</script>
+
+${ await layout({title: 'Demo | Deep nested routes'}, `
+<h1 class="title">${user.firstName} ${user.lastName}</h1>
+<h2 class="subtitle">${bookId}</h2>
+<p>
+	Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ex cumque possimus
+	officiis, ullam aliquid porro incidunt beatae nisi earum autem. Quidem aliquid
+	consectetur eos in quaerat iure voluptatum quas? Quae.
+</p>
+`)}

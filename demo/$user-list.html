@@ -1,0 +1,21 @@
+<ul>
+	${props.users.map((user, i) => `
+	<li class="media">
+		<div class="media-content">
+			<a href="/users/${i}">${user.firstName} ${user.lastName}</a>
+		</div>
+		${(props.canDelete ?? false) ? `
+		<div class="media-right">
+			<button
+				class="button is-danger is-light is-small"
+				name="index"
+				value="${i}"
+				type="submit"
+			>
+				Delete
+			</button>
+		</div>
+		` : ""}
+	</li>
+	`).join('')}
+</ul>

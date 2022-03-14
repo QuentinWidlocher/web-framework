@@ -6,16 +6,16 @@
 			formData.firstName &&
 			formData.lastName
 		) {
-			state.users = [...(state.users ?? []), formData];
-		} else if (formData._action == "DELETE" && state.users) {
-			state.users = state.users.filter((_, i) => i != req.body.index);
+			global.users = [...(global.users ?? []), formData];
+		} else if (formData._action == "DELETE" && global.users) {
+			global.users = global.users.filter((_, i) => i != req.body.index);
 		}
 	}
 
-	let filteredUsers = state.users ?? [];
+	let filteredUsers = global.users ?? [];
 
-	if (req.method == "GET" && state.users && req.query?.search != null) {
-		filteredUsers = state.users.filter(
+	if (req.method == "GET" && global.users && req.query?.search != null) {
+		filteredUsers = global.users.filter(
 			(u) =>
 				u.firstName.includes(req.query.search) ||
 				u.lastName.includes(req.query.search)
@@ -26,87 +26,68 @@
 		filteredUsers,
 		searchQuery: req.query?.search ?? "",
 		layout: await getComponent("layout"),
+		userList: await getComponent("user-list"),
 	};
 </script>
 
 ${await layout({title: 'Demo | Crud'}, `
-<main class="container">
-	<h1 class="title">
-		Example CR<span style="text-decoration: line-through">U</span>D
-	</h1>
+<h1 class="title">
+	Example CR<span style="text-decoration: line-through">U</span>D
+</h1>
 
-	<div class="columns">
-		<section class="column">
-			${state.users?.length > 0 ? `
-			<div class="box">
-				<form method="get">
-					<div class="field has-addons mb-5">
-						<div class="control is-expanded">
-							<input
-								class="input"
-								type="text"
-								name="search"
-								value="${searchQuery}"
-							/>
-						</div>
-						<div class="control">
-							<button class="button is-info" type="submit">Search</button>
-						</div>
-					</div>
-				</form>
-				<form method="post">
-					<input type="hidden" name="_action" value="DELETE" />
-					<ul>
-						${filteredUsers.map((user, i) => `
-						<li class="media">
-							<div class="media-content">
-								<span>${user.firstName} ${user.lastName}</span>
-							</div>
-							<div class="media-right">
-								<button
-									class="button is-danger is-light is-small"
-									name="index"
-									value="${i}"
-									type="submit"
-								>
-									Delete
-								</button>
-							</div>
-						</li>
-						`).join('')}
-					</ul>
-				</form>
-			</div>
-			` : ""}
-		</section>
-		<section class="column">
-			<form class="box" method="post">
-				<input type="hidden" name="_action" value="CREATE" />
-				<div class="field is-grouped">
+<div class="columns">
+	<section class="column">
+		${global.users?.length > 0 ? `
+		<div class="box">
+			<form method="get">
+				<div class="field has-addons mb-5">
 					<div class="control is-expanded">
 						<input
 							class="input"
-							required
-							placeholder="First name"
 							type="text"
-							name="firstName"
-						/>
-					</div>
-					<div class="control is-expanded">
-						<input
-							class="input"
-							required
-							placeholder="Last name"
-							type="text"
-							name="lastName"
+							name="search"
+							value="${searchQuery}"
 						/>
 					</div>
 					<div class="control">
-						<button class="button is-primary" type="submit">Add a user</button>
+						<button class="button is-info" type="submit">Search</button>
 					</div>
 				</div>
 			</form>
-		</section>
-	</div>
-</main>
+			<form method="post">
+				<input type="hidden" name="_action" value="DELETE" />
+				${ await userList({users: filteredUsers, canDelete: true})}
+			</form>
+		</div>
+		` : ""}
+	</section>
+	<section class="column">
+		<form class="box" method="post">
+			<input type="hidden" name="_action" value="CREATE" />
+			<div class="field is-grouped">
+				<div class="control is-expanded">
+					<input
+						class="input"
+						required
+						placeholder="First name"
+						type="text"
+						name="firstName"
+					/>
+				</div>
+				<div class="control is-expanded">
+					<input
+						class="input"
+						required
+						placeholder="Last name"
+						type="text"
+						name="lastName"
+					/>
+				</div>
+				<div class="control">
+					<button class="button is-primary" type="submit">Add a user</button>
+				</div>
+			</div>
+		</form>
+	</section>
+</div>
 `)}

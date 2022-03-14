@@ -1,0 +1,13 @@
+<script server>
+	return {
+	  layout: await getComponent("layout"),
+		userList: await getComponent("user-list"),
+	}
+</script>
+
+${ await layout({title: 'Demo | Users'}, `
+<h1 class="title">User list</h1>
+<h2 class="subtitle">Based on the example form</h2>
+
+<div class="box">${ await userList({users: global.users}) }</div>
+`) }

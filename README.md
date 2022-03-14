@@ -240,6 +240,29 @@ You will then have these routes :
 /nested/c	-> ./nested/c.html
 ```
 
+### Route params
+
+Since we're using Express for our server, we can use route params really easily.  
+You can create a file or a directory with a colon to declare a parameter :
+
+```
+./params/:param.html 	-> /params/abcd, /params/yes, /params/123 etc.
+./users/:id/edit.html -> /users/7452/edit, /users/1337/edit etc.
+```
+
+And since we have access to the `req` object from Express, we can access the route parameters in our script like this :
+
+```html
+<!-- ./users/:id/edit.html -->
+<script server>
+	return {
+		userId: req.params.id,
+	};
+</script>
+
+<h1>Edition of user ${userId}</h1>
+```
+
 ## Components
 
 Of course, you'll want to avoid repeating similar code. Think about the doctype and the head of your pages, they'll probably always be the same, minus some differences here and there.
@@ -415,7 +438,6 @@ This will then display :
 - [x] Create a package on npm (`your-web-framework`)
 - [x] Add nested routes
 - [x] Import "components" with server code
-- [ ] Add route parameters
 - [ ] Add named outlets
 - [ ] An article to explain this to beginners
 

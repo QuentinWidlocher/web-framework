@@ -19,32 +19,30 @@
 </script>
 
 ${ await layout({title}, `
-<main class="container">
-	<h1 class="title mb-5">Welcome to ${title}</h1>
+<h1 class="title mb-5">Welcome to ${title}</h1>
 
-	<hr class="my-5" />
+<hr class="my-5" />
 
-	<h2 class="subtitle">Conditional rendering</h2>
-	${ random > 0.5 ? 'Tail' : 'Head' }
+<h2 class="subtitle">Conditional rendering</h2>
+${ random > 0.5 ? 'Tail' : 'Head' }
 
-	<hr class="my-5" />
+<hr class="my-5" />
 
-	<h2 class="subtitle">List</h2>
-	<ul>
-		${files.map((i) => `
-		<li>${i}</li>
-		` ).join('')}
-	</ul>
+<h2 class="subtitle">List</h2>
+<ul>
+	${files.map((i) => `
+	<li>${i}</li>
+	` ).join('')}
+</ul>
 
-	<hr class="my-5" />
+<hr class="my-5" />
 
-	<h2 class="subtitle">Here is some (server-side fetched) lorem ipsum :</h2>
-	<p>
-		You can add a
-		<span class="is-family-monospace">?paragraphs=5</span> parameter in the url
-		to change the number of rendered paragraphs
-	</p>
+<h2 class="subtitle">Here is some (server-side fetched) lorem ipsum :</h2>
+<p>
+	You can add a
+	<span class="is-family-monospace">?paragraphs=5</span> parameter in the url to
+	change the number of rendered paragraphs
+</p>
 
-	<section class="is-family-monospace mt-5 has-text-gray">${lorem}</section>
-</main>
+<section class="is-family-monospace mt-5 has-text-gray">${lorem}</section>
 `) }
