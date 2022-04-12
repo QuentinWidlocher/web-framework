@@ -17,5 +17,11 @@
 		</div>
 		` : ""}
 	</li>
-	`).join('')}
+	`).join('')} ${(props.users ?? []).length <= 0 ? `
+	<li class="media">
+		<div class="media-content">
+			<p class="has-text-centered">No users found.</p>
+		</div>
+	</li>
+	` : ''}
 </ul>

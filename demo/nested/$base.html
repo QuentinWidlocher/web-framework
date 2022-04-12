@@ -1,9 +1,9 @@
 <script server>
 	return {
 		layout: await getComponent("layout"),
+		...await import('../demo/utils.js')
 	}
 </script>
-
 ${await layout({title: `Demo | Nested ${props.routeName}`, children : `
 <h1 class="title">Nested routes</h1>
 
@@ -13,17 +13,17 @@ ${await layout({title: `Demo | Nested ${props.routeName}`, children : `
 	<div class="navbar-brand">
 		<a
 			href="/nested/A"
-			class="navbar-item ${req.path == '/nested/A' ? 'has-text-primary' : ''}"
+			class="navbar-item ${currentUrlClass(req, '/nested/A','has-text-primary')}"
 			>Nested route A</a
 		>
 		<a
 			href="/nested/B"
-			class="navbar-item ${req.path == '/nested/B' ? 'has-text-primary' : ''}"
+			class="navbar-item ${currentUrlClass(req, '/nested/B','has-text-primary')}"
 			>Nested route B</a
 		>
 		<a
 			href="/nested/C"
-			class="navbar-item ${req.path == '/nested/C' ? 'has-text-primary' : ''}"
+			class="navbar-item ${currentUrlClass(req, '/nested/C','has-text-primary')}"
 			>Nested route C</a
 		>
 	</div>

@@ -63,7 +63,7 @@ export function parse(
 
 	// Now we can create a function that can render the page
 	return (req: Request, props?: Object, children?: string) =>
-		render(req, state, components, html, serverScript, props, children);
+		render(req, state, components, html, serverScript, props);
 }
 
 async function getComponent(
@@ -82,8 +82,7 @@ async function render(
 	components: Record<string, Component>,
 	html: string,
 	serverScript: string,
-	props?: Object,
-	children?: string
+	props?: Object
 ): Promise<string> {
 	// The "scope" is all the available variables in the template
 	let scope = {
@@ -102,10 +101,6 @@ async function render(
 	// It's the user role to return an object in the server script (the bag)
 	// We call the server script and pass our scope values to get the bag back
 	let bag = await serverFunction(...Object.values(scope));
-
-	if (children != null) {
-		html = html.replace("<outlet></outlet>", children);
-	}
 
 	try {
 		return parseStaticTemplateLiteral(html, {

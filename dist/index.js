@@ -95,3 +95,4 @@ export default async function run({ port = defaultConfig.port, directory = defau
 function isError(error) {
     return error instanceof Error;
 }
+//# sourceMappingURL=index.js.map

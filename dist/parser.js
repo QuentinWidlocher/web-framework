@@ -18,14 +18,14 @@ function parseHtml(template) {
 export function parse(template, components) {
     let [html, serverScript] = parseHtml(template);
     let state = {};
-    return (req, props, children) => render(req, state, components, html, serverScript, props, children);
+    return (req, props, children) => render(req, state, components, html, serverScript, props);
 }
 async function getComponent(name, parentReq, components) {
     return async function (props = {}, children) {
         return components[name](parentReq, props, children);
     };
 }
-async function render(req, state, components, html, serverScript, props, children) {
+async function render(req, state, components, html, serverScript, props) {
     let scope = {
         req,
         props,
@@ -36,9 +36,6 @@ async function render(req, state, components, html, serverScript, props, childre
     };
     let serverFunction = new AsyncFunction(Object.keys(scope), serverScript);
     let bag = await serverFunction(...Object.values(scope));
-    if (children != null) {
-        html = html.replace("<outlet></outlet>", children);
-    }
     try {
         return parseStaticTemplateLiteral(html, {
             ...(bag ?? {}),
@@ -53,3 +50,4 @@ async function render(req, state, components, html, serverScript, props, childre
         return "";
     }
 }
+//# sourceMappingURL=parser.js.map

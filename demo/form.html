@@ -91,3 +91,15 @@ ${await layout({title: 'Demo | Crud', children : `
 	</section>
 </div>
 `})}
+
+<!-- Frontend script -->
+<script>
+	let firstInput = document.querySelector("input[name=firstName]");
+
+	// I know this looks strange, and can probably be the source of many bugs
+	// But hey, if it works, it works.
+	if (${req.method == 'POST'}) {
+		// We only focus if the form was submitted
+		firstInput.focus();
+	}
+</script>
